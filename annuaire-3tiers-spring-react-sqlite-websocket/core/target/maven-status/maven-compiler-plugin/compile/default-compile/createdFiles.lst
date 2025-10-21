@@ -1,0 +1,7 @@
+com/annuaire/core/dto/MemberDto$MemberDtoBuilder.class
+com/annuaire/core/repository/MemberRepository.class
+com/annuaire/core/dto/MemberDto.class
+com/annuaire/core/mapper/MemberMapper.class
+com/annuaire/core/model/Member.class
+com/annuaire/core/service/MemberService.class
+com/annuaire/core/model/Member$MemberBuilder.class

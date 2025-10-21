@@ -1,0 +1,5 @@
+/home/brenn/API/annuaire-3tiers-spring-react-sqlite-websocket/core/src/main/java/com/annuaire/core/dto/MemberDto.java
+/home/brenn/API/annuaire-3tiers-spring-react-sqlite-websocket/core/src/main/java/com/annuaire/core/mapper/MemberMapper.java
+/home/brenn/API/annuaire-3tiers-spring-react-sqlite-websocket/core/src/main/java/com/annuaire/core/repository/MemberRepository.java
+/home/brenn/API/annuaire-3tiers-spring-react-sqlite-websocket/core/src/main/java/com/annuaire/core/service/MemberService.java
+/home/brenn/API/annuaire-3tiers-spring-react-sqlite-websocket/core/src/main/java/com/annuaire/core/model/Member.java

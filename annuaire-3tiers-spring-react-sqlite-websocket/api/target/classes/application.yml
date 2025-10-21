@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:./data/annuaire.db
+    driver-class-name: org.sqlite.JDBC
+
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.show_sql: true
+      hibernate.format_sql: true
+      hibernate.temp.use_jdbc_metadata_defaults: false

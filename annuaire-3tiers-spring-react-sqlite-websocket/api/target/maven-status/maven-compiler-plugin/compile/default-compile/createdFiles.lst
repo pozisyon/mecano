@@ -1,0 +1,9 @@
+com/annuaire/api/socket/AnnuaireSocket.class
+com/annuaire/api/controller/PublicController.class
+com/annuaire/api/config/WebConfig.class
+com/annuaire/api/config/WebSocketConfig.class
+com/annuaire/api/controller/AdminController.class
+com/annuaire/api/controller/SpaController.class
+com/annuaire/api/config/SecurityConfig.class
+com/annuaire/api/AnnuaireApplication.class
+com/annuaire/api/controller/MemberController.class

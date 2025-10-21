@@ -1,0 +1,132 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.annuaire</groupId>
+    <artifactId>annuaire-3tiers</artifactId>
+    <version>1.0.0</version>
+  </parent>
+  <artifactId>api</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-websocket</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.6.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.annuaire</groupId>
+      <artifactId>core</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+      <!-- Lombok (pour les annotations @Getter, @Setter, @RequiredArgsConstructor, etc.) -->
+      <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+          <version>1.18.30</version>
+          <scope>provided</scope>
+      </dependency>
+      <!-- Dialecte Hibernate SQLite officiel communautaire -->
+    <!--  <dependency>
+          <groupId>com.github.gwenn</groupId>
+          <artifactId>sqlite-dialect</artifactId>
+          <version>0.1.2</version>
+      </dependency>
+-->
+      <!-- Driver JDBC SQLite -->
+      <dependency>
+          <groupId>org.xerial</groupId>
+          <artifactId>sqlite-jdbc</artifactId>
+          <version>3.45.1.0</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.hibernate.orm</groupId>
+          <artifactId>hibernate-community-dialects</artifactId>
+          <version>6.5.3.Final</version>
+      </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.12.1</version>
+        <configuration>
+          <workingDirectory>frontend</workingDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals><goal>install-node-and-npm</goal></goals>
+            <configuration>
+              <nodeVersion>v20.16.0</nodeVersion>
+            </configuration>
+          </execution>
+            <execution>
+                <id>npm install</id>
+                <goals><goal>npm</goal></goals>
+                <configuration>
+                    <arguments>install</arguments>   <!-- ✅ Correction -->
+                </configuration>
+            </execution>
+
+            <execution>
+            <id>npm run build</id>
+            <goals><goal>npm</goal></goals>
+            <phase>package</phase>
+            <configuration>
+              <arguments>run build</arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+        <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>3.3.1</version>
+            <executions>
+                <execution>
+                    <id>copy-react-build</id>
+                    <phase>prepare-package</phase>
+                    <goals><goal>copy-resources</goal></goals>
+                    <configuration>
+                        <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+                        <resources>
+                            <resource>
+                                <directory>${project.basedir}/frontend/dist</directory> <!-- ou build -->
+                            </resource>
+                        </resources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>3.3.4</version>
+      </plugin>
+    </plugins>
+
+  </build>
+
+</project>
