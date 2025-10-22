@@ -1,29 +1,44 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import AdminPage from "./pages/Admin";
 import PublicPage from "./pages/Public";
-import Members from "./pages/Members";
-import NotFound from "./pages/NotFound";
+import MainLayout from "./layouts/MainLayout";
 
-function App() {
+export default function App() {
+  const isAuthenticated = localStorage.getItem("authToken") !== null;
+
   return (
     <BrowserRouter>
       <Routes>
-        {/* Page d'accueil */}
-        <Route path="/" element={<Home />} />
-
-        {/* Pages internes */}
-
-        <Route path="/members" element={<Members />} />
-                <Route path="/public" element={<PublicPage />} />
-                <Route path="/admin" element={<AdminPage />} />
-
-        {/* Gestion des routes inconnues */}
-        <Route path="*" element={<NotFound />} />
+        <Route
+          path="/"
+          element={
+            <MainLayout>
+              <Home />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/public"
+          element={
+            <MainLayout>
+              <PublicPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            isAuthenticated ? (
+              <MainLayout>
+                <AdminPage />
+              </MainLayout>
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
 }
-
-export default App;

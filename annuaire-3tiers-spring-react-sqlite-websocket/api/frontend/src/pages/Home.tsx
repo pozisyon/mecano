@@ -72,13 +72,6 @@ export default function Home() {
         </section>
       </main>
 
-      {/* FOOTER */}
-      <footer className="bg-blue-900 text-blue-100 py-6 text-center mt-10">
-        <p className="text-sm">
-          Université du Québec à Trois-Rivières — Département d’Informatique<br />
-          Devoir de : <strong>Réseaux</strong> | Automne 2025
-        </p>
-      </footer>
     </div>
   );
 }

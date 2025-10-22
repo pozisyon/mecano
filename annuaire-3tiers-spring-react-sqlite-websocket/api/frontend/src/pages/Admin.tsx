@@ -1,249 +1,306 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useSocket } from "../hooks/useSocket";
-import MemberForm from "../components/MemberForm";
-import {
-  adminListAll,
-  adminAdd,
-  adminUpdate,
-  adminDelete,
-  adminToggleRed,
-} from "../api/client";
-import MemberForm from "../components/MemberForm";
-import type { Member } from "../types";
+import React, { useEffect, useState } from "react";
 
-function toBasic(user: string, pass: string) {
-  return "Basic " + btoa(`${user}:${pass}`);
+interface Member {
+  id?: number;
+  nom: string;
+  prenom: string;
+  categorie: string;
+  email: string;
+  telephone?: string;
+  domaine?: string;
+  red?: boolean;
 }
 
-const AdminPage: React.FC = () => {
-  const [auth, setAuth] = useState<string | undefined>();
-  const [user, setUser] = useState("admin");
-  const [pass, setPass] = useState("admin123");
-
+export default function AdminPage() {
   const [members, setMembers] = useState<Member[]>([]);
+  const [form, setForm] = useState<Member>({
+    nom: "",
+    prenom: "",
+    categorie: "ETUDIANT",
+    email: "",
+    telephone: "",
+    domaine: "",
+    red: false,
+  });
   const [editing, setEditing] = useState<Member | null>(null);
-  const [clients, setClients] = useState<string[]>([]);
+  const [message, setMessage] = useState<string>("");
 
-  const opts = useMemo(() => ({ auth }), [auth]);
-
-  const loadMembers = useCallback(async () => {
-    try {
-      const data = await adminListAll(opts);
-      setMembers(data);
-    } catch (e) {
-      console.error("Erreur de chargement des membres:", e);
-    }
-  }, [opts]);
-
-  // --- WebSocket : actualisation automatique ---
-  useSocket(loadMembers, setClients);
+  // Charger tous les membres
+  const loadMembers = () => {
+    fetch("/api/admin/members")
+      .then((res) => res.json())
+      .then(setMembers)
+      .catch((err) => console.error("Erreur chargement membres:", err));
+  };
 
   useEffect(() => {
-    if (auth) loadMembers();
-  }, [auth, loadMembers]);
+    loadMembers();
+  }, []);
 
-  async function handleLogin() {
-    const a = toBasic(user, pass);
-    setAuth(a);
-  }
+  // Ajouter un membre
+  const handleAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetch("/api/admin/members", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setMessage("✅ Membre ajouté !");
+        setMembers([...members, data]);
+        setForm({
+          nom: "",
+          prenom: "",
+          categorie: "ETUDIANT",
+          email: "",
+          telephone: "",
+          domaine: "",
+          red: false,
+        });
+      })
+      .catch(() => setMessage("❌ Erreur d’ajout"));
+  };
 
-  async function handleAdd(m: Member | Partial<Member>) {
-    try {
-      await adminAdd(m as Member, opts);
-      setEditing(null);
-      loadMembers();
-    } catch (e) {
-      alert("Erreur lors de l’ajout");
-    }
-  }
+  // Supprimer un membre
+  const handleDelete = (id?: number) => {
+    if (!id) return;
+    if (!confirm("Voulez-vous vraiment supprimer ce membre ?")) return;
+    fetch(`/api/admin/members/${id}`, { method: "DELETE" })
+      .then(() => {
+        setMembers(members.filter((m) => m.id !== id));
+        setMessage("🗑️ Membre supprimé");
+      })
+      .catch(() => setMessage("❌ Erreur de suppression"));
+  };
 
-  async function handleUpdate(m: Member | Partial<Member>) {
+  // Modifier un membre
+  const handleEdit = (m: Member) => {
+    setEditing(m);
+  };
+
+  const handleUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
     if (!editing?.id) return;
-    try {
-      await adminUpdate(editing.id, m, opts);
-      setEditing(null);
-      loadMembers();
-    } catch (e) {
-      alert("Erreur lors de la mise à jour");
-    }
-  }
+    fetch(`/api/admin/members/${editing.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(editing),
+    })
+      .then((res) => res.json())
+      .then((updated) => {
+        setMembers(
+          members.map((m) => (m.id === updated.id ? updated : m))
+        );
+        setEditing(null);
+        setMessage("✅ Membre mis à jour !");
+      })
+      .catch(() => setMessage("❌ Erreur de mise à jour"));
+  };
 
-  async function handleDelete(id: number) {
-    if (!confirm("Supprimer ce membre ?")) return;
-    try {
-      await adminDelete(id, opts);
-      loadMembers();
-    } catch {
-      alert("Erreur lors de la suppression");
-    }
-  }
-
-  async function handleToggleRed(m: Member) {
-    try {
-      await adminToggleRed(m.id!, !m.red, opts);
-      loadMembers();
-    } catch {
-      alert("Erreur lors du changement de statut rouge");
-    }
-  }
+  // Basculer liste rouge
+  const toggleRed = (id?: number) => {
+    const m = members.find((x) => x.id === id);
+    if (!m) return;
+    fetch(`/api/admin/members/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...m, red: !m.red }),
+    })
+      .then((res) => res.json())
+      .then((updated) => {
+        setMembers(members.map((x) => (x.id === id ? updated : x)));
+      });
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* HEADER */}
-      <header className="bg-white shadow p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <h1 className="text-2xl font-bold text-blue-700">Espace Administrateur</h1>
+    <div className="min-h-screen bg-gray-100 p-10">
+      <h1 className="text-3xl font-bold text-center mb-8 text-blue-800">
+        🧭 Tableau de bord – Administration
+      </h1>
 
-        {!auth ? (
-          <div className="flex gap-2">
+      {message && (
+        <div className="bg-green-100 text-green-700 px-4 py-2 rounded mb-4">
+          {message}
+        </div>
+      )}
+
+      {/* Formulaire d'ajout */}
+      <form
+        onSubmit={handleAdd}
+        className="bg-white rounded-lg shadow p-6 mb-10"
+      >
+        <h2 className="text-xl font-semibold mb-4 text-gray-700">
+          ➕ Ajouter un membre
+        </h2>
+        <div className="grid md:grid-cols-2 gap-4">
+          <input
+            className="border p-2 rounded"
+            placeholder="Nom"
+            value={form.nom}
+            onChange={(e) => setForm({ ...form, nom: e.target.value })}
+            required
+          />
+          <input
+            className="border p-2 rounded"
+            placeholder="Prénom"
+            value={form.prenom}
+            onChange={(e) => setForm({ ...form, prenom: e.target.value })}
+            required
+          />
+          <select
+            className="border p-2 rounded"
+            value={form.categorie}
+            onChange={(e) => setForm({ ...form, categorie: e.target.value })}
+          >
+            <option value="PROF">Professeur</option>
+            <option value="AUX">Auxiliaire</option>
+            <option value="ETUDIANT">Étudiant</option>
+          </select>
+          <input
+            className="border p-2 rounded"
+            placeholder="Email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            required
+          />
+          <input
+            className="border p-2 rounded"
+            placeholder="Téléphone"
+            value={form.telephone}
+            onChange={(e) => setForm({ ...form, telephone: e.target.value })}
+          />
+          <input
+            className="border p-2 rounded"
+            placeholder="Domaine"
+            value={form.domaine}
+            onChange={(e) => setForm({ ...form, domaine: e.target.value })}
+          />
+        </div>
+        <button
+          type="submit"
+          className="mt-5 bg-blue-700 text-white px-6 py-2 rounded hover:bg-blue-800"
+        >
+          Ajouter
+        </button>
+      </form>
+
+      {/* Liste des membres */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold mb-4 text-gray-700">
+          📋 Liste des membres
+        </h2>
+
+        <table className="min-w-full border text-sm text-left">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="p-2">Nom</th>
+              <th className="p-2">Prénom</th>
+              <th className="p-2">Catégorie</th>
+              <th className="p-2">Email</th>
+              <th className="p-2">Domaine</th>
+              <th className="p-2 text-center">Rouge</th>
+              <th className="p-2 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {members.map((m) => (
+              <tr
+                key={m.id}
+                className={`border-t ${
+                  m.red ? "bg-red-100 text-red-800" : "hover:bg-gray-50"
+                }`}
+              >
+                <td className="p-2">{m.nom}</td>
+                <td className="p-2">{m.prenom}</td>
+                <td className="p-2">{m.categorie}</td>
+                <td className="p-2">{m.email}</td>
+                <td className="p-2">{m.domaine}</td>
+                <td className="p-2 text-center">
+                  <input
+                    type="checkbox"
+                    checked={m.red}
+                    onChange={() => toggleRed(m.id)}
+                  />
+                </td>
+                <td className="p-2 flex justify-center gap-2">
+                  <button
+                    onClick={() => handleEdit(m)}
+                    className="px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    onClick={() => handleDelete(m.id)}
+                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                  >
+                    🗑️
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Modale d’édition */}
+      {editing && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <form
+            onSubmit={handleUpdate}
+            className="bg-white p-6 rounded-lg shadow-xl w-96"
+          >
+            <h3 className="text-lg font-semibold mb-3">Modifier le membre</h3>
             <input
-              className="input"
-              placeholder="Nom d’utilisateur"
-              value={user}
-              onChange={(e) => setUser(e.target.value)}
+              className="border p-2 rounded w-full mb-2"
+              placeholder="Nom"
+              value={editing.nom}
+              onChange={(e) =>
+                setEditing({ ...editing, nom: e.target.value })
+              }
             />
             <input
-              className="input"
-              type="password"
-              placeholder="Mot de passe"
-              value={pass}
-              onChange={(e) => setPass(e.target.value)}
+              className="border p-2 rounded w-full mb-2"
+              placeholder="Prénom"
+              value={editing.prenom}
+              onChange={(e) =>
+                setEditing({ ...editing, prenom: e.target.value })
+              }
             />
-            <button className="btn-primary" onClick={handleLogin}>
-              Se connecter
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3">
-            <span className="text-gray-600">Connecté : {user}</span>
-            <button
-              className="btn"
-              onClick={() => {
-                setAuth(undefined);
-                setMembers([]);
-              }}
-            >
-              Déconnexion
-            </button>
-          </div>
-        )}
-      </header>
-
-      <main className="max-w-6xl mx-auto p-6 space-y-10">
-        {/* FORMULAIRE ADD / EDIT */}
-        <section className="card">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">
-              {editing ? "Modifier un membre" : "Ajouter un membre"}
-            </h2>
-            {editing && (
-              <button className="btn" onClick={() => setEditing(null)}>
+            <input
+              className="border p-2 rounded w-full mb-2"
+              placeholder="Email"
+              value={editing.email}
+              onChange={(e) =>
+                setEditing({ ...editing, email: e.target.value })
+              }
+            />
+            <input
+              className="border p-2 rounded w-full mb-2"
+              placeholder="Domaine"
+              value={editing.domaine}
+              onChange={(e) =>
+                setEditing({ ...editing, domaine: e.target.value })
+              }
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setEditing(null)}
+                className="bg-gray-300 px-4 py-2 rounded"
+              >
                 Annuler
               </button>
-            )}
-          </div>
-
-          <MemberForm
-            initial={editing ?? {}}
-            onSubmit={editing ? handleUpdate : handleAdd}
-            submitLabel={editing ? "Mettre à jour" : "Ajouter"}
-          />
-        </section>
-
-        {/* TABLEAU DES MEMBRES */}
-        <section className="card">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">Membres enregistrés</h2>
-            <button className="btn" onClick={loadMembers}>
-              Rafraîchir
-            </button>
-          </div>
-
-          <div className="overflow-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100 text-left">
-                  <th className="p-3">Nom</th>
-                  <th className="p-3">Prénom</th>
-                  <th className="p-3">Catégorie</th>
-                  <th className="p-3">Email</th>
-                  <th className="p-3">Domaine</th>
-                  <th className="p-3">Statut</th>
-                  <th className="p-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {members.map((m) => (
-                  <tr
-                    key={m.id}
-                    className="border-b hover:bg-gray-50 transition-all"
-                  >
-                    <td className="p-3">{m.nom}</td>
-                    <td className="p-3">{m.prenom}</td>
-                    <td className="p-3">{m.categorie}</td>
-                    <td className="p-3">{m.email}</td>
-                    <td className="p-3">{m.domaine || "—"}</td>
-                    <td className="p-3">
-                      <span
-                        className={`px-2 py-1 rounded text-sm font-semibold ${
-                          m.red
-                            ? "bg-red-100 text-red-700"
-                            : "bg-green-100 text-green-700"
-                        }`}
-                      >
-                        {m.red ? "Sur liste rouge" : "OK"}
-                      </span>
-                    </td>
-                    <td className="p-3 flex flex-wrap gap-2">
-                      <button
-                        className="btn text-blue-600 border-blue-500"
-                        onClick={() => setEditing(m)}
-                      >
-                        Modifier
-                      </button>
-                      <button
-                        className="btn text-yellow-700 border-yellow-600"
-                        onClick={() => handleToggleRed(m)}
-                      >
-                        {m.red ? "Enlever rouge" : "Mettre rouge"}
-                      </button>
-                      <button
-                        className="btn text-red-700 border-red-600"
-                        onClick={() => handleDelete(m.id!)}
-                      >
-                        Supprimer
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-                {!members.length && (
-                  <tr>
-                    <td className="p-3 text-gray-500" colSpan={7}>
-                      Aucun membre trouvé
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* CLIENTS CONNECTÉS */}
-        <section className="card">
-          <h2 className="text-xl font-semibold mb-3 text-gray-800">
-            Clients connectés (via WebSocket)
-          </h2>
-          <ul className="list-disc ml-6">
-            {clients.map((c) => (
-              <li key={c}>{c}</li>
-            ))}
-            {!clients.length && (
-              <li className="text-gray-500">Aucun client connecté</li>
-            )}
-          </ul>
-        </section>
-      </main>
+              <button
+                type="submit"
+                className="bg-green-600 text-white px-4 py-2 rounded"
+              >
+                Enregistrer
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
-};
-
-export default AdminPage;
+}
