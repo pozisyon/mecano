@@ -6,4 +6,5 @@
 /home/brenn/API/annuaire-3tiers-spring-react-sqlite-websocket/api/src/main/java/com/annuaire/api/controller/AdminController.java
 /home/brenn/API/annuaire-3tiers-spring-react-sqlite-websocket/api/src/main/java/com/annuaire/api/socket/AnnuaireSocket.java
 /home/brenn/API/annuaire-3tiers-spring-react-sqlite-websocket/api/src/main/java/com/annuaire/api/config/WebConfig.java
+/home/brenn/API/annuaire-3tiers-spring-react-sqlite-websocket/api/src/main/java/com/annuaire/api/service/ClientTracker.java
 /home/brenn/API/annuaire-3tiers-spring-react-sqlite-websocket/api/src/main/java/com/annuaire/api/config/WebSocketConfig.java
