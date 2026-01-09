@@ -1,0 +1,9 @@
+@media (max-width: 640px) {
+  .headerRow, .navRow, .row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form { max-width: 100%; }
+  .truncate { max-width: 160px; }
+}
