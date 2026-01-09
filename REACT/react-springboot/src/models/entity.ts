@@ -1,5 +1,6 @@
 export type Entity = {
   id?: number;
-  name: string;
+  nom: string;      // nom
+  prenom: string; // prenom
   email: string;
 };

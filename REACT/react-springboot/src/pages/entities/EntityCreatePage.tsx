@@ -6,7 +6,9 @@ import { createEntity } from "../../api/entityService";
 export default function EntityCreatePage() {
   const navigate = useNavigate();
 
-  const initial: Entity = { name: "", email: "" };
+const initial: Entity = { nom: "", prenom: "", email: "" };
+
+
 
   return (
     <div className="card">
