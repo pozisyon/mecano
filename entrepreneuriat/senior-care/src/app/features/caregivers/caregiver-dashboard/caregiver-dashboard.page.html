@@ -1,0 +1,11 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Dashboard Proche aidant</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @for (senior of linkedSeniors; track senior.id) {
+  <p>Aîné suivi : {{ senior.city }} - autonomie {{ senior.autonomyLevel }}</p>
+  }
+</ion-content>

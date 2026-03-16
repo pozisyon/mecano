@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Médicaments</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    @for (med of medications; track med.id) {
+    <ion-item>
+      <ion-label>
+        <h2>{{ med.name }} - {{ med.dosage }}</h2>
+        <p>Heure : {{ med.schedule }}</p>
+        <p>Stock : {{ med.stock }}</p>
+        <p>Pris : {{ med.taken ? 'Oui' : 'Non' }}</p>
+      </ion-label>
+
+      @if (!med.taken) {
+      <ion-button slot="end" (click)="markAsTaken(med.id)">
+        Confirmer
+      </ion-button>
+      }
+    </ion-item>
+    }
+  </ion-list>
+</ion-content>

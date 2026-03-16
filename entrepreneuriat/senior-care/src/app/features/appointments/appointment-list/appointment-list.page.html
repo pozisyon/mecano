@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Rendez-vous</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    @for (appointment of appointments; track appointment.id) {
+    <ion-item>
+      <ion-label>
+        <h2>{{ appointment.title }}</h2>
+        <p>{{ appointment.date }} à {{ appointment.time }}</p>
+        <p>{{ appointment.location }}</p>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+</ion-content>

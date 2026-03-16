@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Demandes d’admission</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    @for (request of requests; track request.id) {
+    <ion-item>
+      <ion-label>
+        <h2>Demande #{{ request.id }}</h2>
+        <p>Senior ID : {{ request.seniorId }}</p>
+        <p>Statut : {{ request.status }}</p>
+      </ion-label>
+
+      @if (request.status === 'PENDING') {
+      <ion-button slot="end" color="success" (click)="accept(request.id)">Accepter</ion-button>
+      <ion-button slot="end" color="danger" (click)="reject(request.id)">Refuser</ion-button>
+      }
+    </ion-item>
+    }
+  </ion-list>
+</ion-content>

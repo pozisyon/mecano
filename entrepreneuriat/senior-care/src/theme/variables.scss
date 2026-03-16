@@ -1,0 +1,32 @@
+// For information on how to create your own theme, please refer to:
+// https://ionicframework.com/docs/theming/
+:root {
+
+  --ion-color-primary: #2b7cff;
+  --ion-color-secondary: #4caf50;
+  --ion-color-danger: #e53935;
+
+  --ion-font-family: "Arial", sans-serif;
+
+}
+
+/* taille texte globale */
+
+body {
+  font-size: 20px;
+}
+
+/* boutons grands */
+
+ion-button {
+  height: 60px;
+  font-size: 20px;
+  border-radius: 12px;
+}
+
+/* cartes plus lisibles */
+
+ion-card {
+  border-radius: 16px;
+  margin-bottom: 20px;
+}

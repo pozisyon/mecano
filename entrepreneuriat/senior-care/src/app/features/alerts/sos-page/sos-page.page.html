@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-title>Alerte SOS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-button expand="block" color="danger" size="large" (click)="sendAlert()">
+    Envoyer une alerte SOS
+  </ion-button>
+
+  @if (confirmationMessage) {
+  <ion-text color="success">
+    <p class="ion-margin-top">{{ confirmationMessage }}</p>
+  </ion-text>
+  }
+</ion-content>

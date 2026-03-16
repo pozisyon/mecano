@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Dashboard Résidence</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if (residence) {
+  <p>{{ residence.name }}</p>
+  <p>Ville : {{ residence.city }}</p>
+  <p>Places disponibles : {{ residence.availablePlaces }}</p>
+  }
+
+  <ion-button expand="block" routerLink="/residence/requests">
+    Voir les demandes
+  </ion-button>
+</ion-content>
