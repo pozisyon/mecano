@@ -1,4 +1,4 @@
-package com.mecano.assistance.security;
+package com.mecano.assistance.infrastructure.security;
 
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.*;
@@ -8,7 +8,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.*;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -19,35 +18,33 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
-   /* private final JwtAuthFilter jwtAuthFilter;
-
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
-        this.jwtAuthFilter = jwtAuthFilter;
-    }*/
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
                 .authorizeHttpRequests(auth -> auth
-                        /*.requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/api/auth/**",
+                                "/oauth2/**",
+                                "/api/public/**"
+                        ).permitAll()
+                        .requestMatchers("/api/vehicles/**")
+                        .hasAnyRole("DRIVER", "ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/appointments/**").hasAnyRole("ADMIN", "CLIENT", "MECHANIC")
-                        .requestMatchers("/api/mechanic/**").hasAnyRole("MECHANIC", "ADMIN")
-                        .requestMatchers("/api/vehicles/**").hasAnyRole("ADMIN", "MECHANIC", "CLIENT")
-                        .requestMatchers("/api/repairs/**").hasAnyRole("ADMIN", "MECHANIC")
-                        .requestMatchers("/api/invoices/**").hasAnyRole("ADMIN", "MECHANIC", "CLIENT")
-                        .requestMatchers("/api/client/**").hasRole("CLIENT")*/
-                        .anyRequest().permitAll()
+                        .requestMatchers("/api/breakdowns/**").hasAnyRole("DRIVER", "ADMIN")
+                        .requestMatchers("/api/interventions/**").hasAnyRole("MECHANIC", "GARAGE_ADMIN", "ADMIN")
+                        .anyRequest().authenticated()
                 )
-               // .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                //.oauth2Login(oauth -> oauth
+                    //   .defaultSuccessUrl("/api/auth/oauth2/success", true)
+             //   )
+               // .oauth2ResourceServer(oauth2 -> oauth2.jwt())
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -83,4 +80,5 @@ public class SecurityConfig {
 
         return source;
     }
+
 }

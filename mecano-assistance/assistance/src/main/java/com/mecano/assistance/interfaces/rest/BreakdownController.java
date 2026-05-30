@@ -5,6 +5,7 @@ import com.mecano.assistance.application.usecase.CreateBreakdownRequestUseCase;
 import com.mecano.assistance.application.usecase.FindMatchingMechanicsUseCase;
 import com.mecano.assistance.domain.valueobject.Location;
 import com.mecano.assistance.interfaces.rest.dto.CreateBreakdownRequestDto;
+import com.mecano.assistance.interfaces.rest.response.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class BreakdownController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Object create(@Valid @RequestBody CreateBreakdownRequestDto dto) {
+    public ApiResponse<?> create(@Valid @RequestBody CreateBreakdownRequestDto dto) {
         var command = new CreateBreakdownRequestCommand(
                 dto.driverId(),
                 dto.vehicleId(),
@@ -36,11 +37,19 @@ public class BreakdownController {
                 dto.createdAt()
         );
 
-        return createBreakdownRequestUseCase.execute(command);
+        //return createBreakdownRequestUseCase.execute(command);
+        return ApiResponse.success(
+                "Breakdown request created successfully",
+                createBreakdownRequestUseCase.execute(command)
+        );
     }
 
     @GetMapping("/{id}/matches")
-    public Object findMatches(@PathVariable UUID id) {
-        return findMatchingMechanicsUseCase.execute(id);
+    public ApiResponse<?> findMatches(@PathVariable UUID id) {
+       // return findMatchingMechanicsUseCase.execute(id);
+        return ApiResponse.success(
+                "Breakdown request findMatches successfully",
+                findMatchingMechanicsUseCase.execute(id)
+        );
     }
 }

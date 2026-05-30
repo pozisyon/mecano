@@ -15,7 +15,7 @@ public class BreakdownRequest {
     private final Location location;
     private BreakdownStatus status;
     private final LocalDateTime createdAt;
-
+    private int dispatchAttempts;
     private BreakdownRequest(
             UUID id,
             UUID driverId,
@@ -24,7 +24,8 @@ public class BreakdownRequest {
             String description,
             Location location,
             BreakdownStatus status,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            int dispatchAttempts
     ) {
         this.id = id;
         this.driverId = driverId;
@@ -34,6 +35,7 @@ public class BreakdownRequest {
         this.location = location;
         this.status = status;
         this.createdAt = createdAt;
+        this.dispatchAttempts = dispatchAttempts;
     }
 
     public static BreakdownRequest create(
@@ -43,7 +45,8 @@ public class BreakdownRequest {
             String description,
             Location location,
             BreakdownStatus status,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            int dispatchAttempts
     ) {
         if (driverId == null) throw new IllegalArgumentException("Driver is required");
         if (vehicleId == null) throw new IllegalArgumentException("Vehicle is required");
@@ -58,7 +61,8 @@ public class BreakdownRequest {
                 description,
                 location,
                 status,
-                createdAt
+                createdAt,
+                0
         );
     }
 
@@ -83,7 +87,8 @@ public class BreakdownRequest {
             String description,
             Location location,
             BreakdownStatus status,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            int dispatchAttempts
     ) {
         BreakdownRequest request = new BreakdownRequest(
                 id,
@@ -93,7 +98,9 @@ public class BreakdownRequest {
                 description,
                 location,
                 status,
-                createdAt
+                createdAt,
+                dispatchAttempts
+
         );
 
         request.status = status;
@@ -108,4 +115,20 @@ public class BreakdownRequest {
     public Location getLocation() { return location; }
     public BreakdownStatus getStatus() { return status; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public int getDispatchAttempts(){return dispatchAttempts;}
+
+    public void incrementDispatchAttempts() {
+        this.dispatchAttempts++;
+    }
+
+    public boolean hasReachedMaxDispatchAttempts(int maxAttempts) {
+        return this.dispatchAttempts >= maxAttempts;
+    }
+
+    public void expire() {
+        if (this.status != BreakdownStatus.PENDING) {
+            throw new IllegalStateException("Only pending breakdown request can expire");
+        }
+        this.status = BreakdownStatus.EXPIRED;
+    }
 }

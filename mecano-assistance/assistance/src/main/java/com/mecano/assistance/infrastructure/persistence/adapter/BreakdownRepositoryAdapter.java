@@ -2,11 +2,13 @@ package com.mecano.assistance.infrastructure.persistence.adapter;
 
 
 import com.mecano.assistance.domain.model.BreakdownRequest;
+import com.mecano.assistance.domain.model.BreakdownStatus;
 import com.mecano.assistance.domain.port.BreakdownRepositoryPort;
 import com.mecano.assistance.infrastructure.persistence.mapper.BreakdownRequestMapper;
 import com.mecano.assistance.infrastructure.persistence.repository.SpringDataBreakdownRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,5 +32,13 @@ public class BreakdownRepositoryAdapter implements BreakdownRepositoryPort {
     public Optional<BreakdownRequest> findById(UUID id) {
         return repository.findById(id)
                 .map(BreakdownRequestMapper::toDomain);
+    }
+
+    @Override
+    public List<BreakdownRequest> findByStatus(BreakdownStatus status) {
+        return repository.findByStatus(status)
+                .stream()
+                .map(BreakdownRequestMapper::toDomain)
+                .toList();
     }
 }

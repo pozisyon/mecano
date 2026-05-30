@@ -18,6 +18,7 @@ public class BreakdownRequestMapper {
         entity.setLongitude(request.getLocation().longitude());
         entity.setStatus(request.getStatus());
         entity.setCreatedAt(request.getCreatedAt());
+        entity.setDispatchAttempts(request.getDispatchAttempts());
 
         return entity;
     }
@@ -31,7 +32,10 @@ public class BreakdownRequestMapper {
                 entity.getDescription(),
                 new Location(entity.getLatitude(), entity.getLongitude()),
                 entity.getStatus(),
-                entity.getCreatedAt()
+                entity.getCreatedAt(),
+                entity.getDispatchAttempts() != null
+                        ? entity.getDispatchAttempts()
+                        : 0
         );
 
         return request;

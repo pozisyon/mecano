@@ -22,7 +22,7 @@ public class MechanicRepositoryAdapter implements MechanicRepositoryPort {
 
     @Override
     public List<Mechanic> findAvailableMechanicsNear(Location location) {
-        return repository.findByAvailableTrue()
+        return repository.findByApprovedFalse()//findByAvailableTrue() a verifier
                 .stream()
                 .map(MechanicMapper::toDomain)
                 .toList();

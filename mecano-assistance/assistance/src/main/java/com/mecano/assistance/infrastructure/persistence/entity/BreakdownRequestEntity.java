@@ -3,10 +3,14 @@ package com.mecano.assistance.infrastructure.persistence.entity;
 import com.mecano.assistance.domain.model.BreakdownStatus;
 import com.mecano.assistance.domain.model.BreakdownType;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "breakdown_requests")
 public class BreakdownRequestEntity {
@@ -30,30 +34,8 @@ public class BreakdownRequestEntity {
 
     private LocalDateTime createdAt;
 
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+   // private int dispatchAttempts;
+   @Column(name = "dispatch_attempts", nullable = false)
+   private Integer dispatchAttempts = 0;
 
-    public UUID getDriverId() { return driverId; }
-    public void setDriverId(UUID driverId) { this.driverId = driverId; }
-
-    public UUID getVehicleId() { return vehicleId; }
-    public void setVehicleId(UUID vehicleId) { this.vehicleId = vehicleId; }
-
-    public BreakdownType getType() { return type; }
-    public void setType(BreakdownType type) { this.type = type; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public double getLatitude() { return latitude; }
-    public void setLatitude(double latitude) { this.latitude = latitude; }
-
-    public double getLongitude() { return longitude; }
-    public void setLongitude(double longitude) { this.longitude = longitude; }
-
-    public BreakdownStatus getStatus() { return status; }
-    public void setStatus(BreakdownStatus status) { this.status = status; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

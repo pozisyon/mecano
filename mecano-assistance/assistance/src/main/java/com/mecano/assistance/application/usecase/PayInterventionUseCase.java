@@ -8,6 +8,8 @@ import com.mecano.assistance.domain.port.InterventionRepositoryPort;
 import com.mecano.assistance.domain.port.NotificationPort;
 import com.mecano.assistance.domain.port.PaymentPort;
 import com.mecano.assistance.domain.port.PaymentRepositoryPort;
+import com.mecano.assistance.interfaces.rest.exception.BusinessException;
+import com.mecano.assistance.interfaces.rest.exception.NotFoundException;
 
 public class PayInterventionUseCase {
 
@@ -30,10 +32,10 @@ public class PayInterventionUseCase {
 
     public PayInterventionResult execute(PayInterventionCommand command) {
         var intervention = interventionRepository.findById(command.interventionId())
-                .orElseThrow(() -> new IllegalArgumentException("Intervention not found"));
+                .orElseThrow(() -> new NotFoundException("Intervention not found"));//new IllegalArgumentException("Intervention not found"));
 
         if (paymentRepository.findByInterventionId(command.interventionId()).isPresent()) {
-            throw new IllegalStateException("Intervention already has a payment");
+            throw new BusinessException("Breakdown request already assigned");//throw new IllegalStateException("Intervention already has a payment");
         }
 
         var payment = Payment.create(

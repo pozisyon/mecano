@@ -1,22 +1,32 @@
 package com.mecano.assistance.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.util.UUID;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "mechanics")
 public class MechanicEntity {
 
     @Id
     private UUID id;
-
+    private UUID userId;
     private String fullName;
     private String speciality;
     private boolean available;
     private double rating;
     private double latitude;
     private double longitude;
+   // private boolean approve =false;
+   @Column(name = "approved", nullable = false)
+   private boolean approved = false;
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
@@ -38,4 +48,11 @@ public class MechanicEntity {
 
     public double getLongitude() { return longitude; }
     public void setLongitude(double longitude) { this.longitude = longitude; }
-}
+    public boolean isApproved(){
+        return this.approved;
+    }
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
+    }
