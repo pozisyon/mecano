@@ -8,7 +8,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.*;
-
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -16,33 +17,114 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(auth -> auth
+
+                        // PUBLIC
                         .requestMatchers(
                                 "/",
                                 "/api/auth/**",
                                 "/oauth2/**",
-                                "/api/public/**"
+                                "/api/public/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/actuator/health",
+                                "/swagger-ui.html"
                         ).permitAll()
+                                // ADMIN - MECHANIC VALIDATION
+                                .requestMatchers("/api/admin/mechanics/pending")
+                                .hasAuthority("PERMISSION_MECHANIC_READ")
+
+                                .requestMatchers("/api/admin/mechanics/*/approve")
+                                .hasAuthority("PERMISSION_MECHANIC_VALIDATE")
+
+                                .requestMatchers("/api/admin/mechanics/*/reject")
+                                .hasAuthority("PERMISSION_MECHANIC_REJECT")
+
+
+                        // WEBSOCKET
+                        .requestMatchers("/ws/**")
+                        .authenticated()
+
+                        // DRIVER
                         .requestMatchers("/api/vehicles/**")
                         .hasAnyRole("DRIVER", "ADMIN")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/breakdowns/**").hasAnyRole("DRIVER", "ADMIN")
-                        .requestMatchers("/api/interventions/**").hasAnyRole("MECHANIC", "GARAGE_ADMIN", "ADMIN")
+
+                        .requestMatchers("/api/breakdowns/**")
+                        .hasAnyRole("DRIVER", "ADMIN")
+
+                        // MECHANIC / GARAGE
+                        .requestMatchers("/api/mechanics/**")
+                        .hasAnyRole("MECHANIC", "GARAGE_ADMIN", "ADMIN")
+
+                        .requestMatchers("/api/interventions/**")
+                        .hasAnyRole("MECHANIC", "GARAGE_ADMIN", "ADMIN")
+
+                        // PAYMENTS / INVOICES
+                        .requestMatchers("/api/payments/**")
+                        .hasAnyRole("DRIVER", "ADMIN", "FINANCE_AGENT", "FINANCE_MANAGER")
+
+                        .requestMatchers("/api/invoices/**")
+                        .hasAnyRole("DRIVER", "ADMIN", "FINANCE_AGENT", "FINANCE_MANAGER")
+
+                        // CHAT
+                        .requestMatchers("/api/chat/**")
+                        .hasAnyRole("DRIVER", "MECHANIC", "GARAGE_ADMIN", "ADMIN")
+
+                        // REVIEWS
+                        .requestMatchers("/api/reviews/**")
+                        .hasAnyRole("DRIVER", "MECHANIC", "GARAGE_ADMIN", "ADMIN")
+
+                        // DISPUTES / SUPPORT
+                        .requestMatchers("/api/disputes/**")
+                        .hasAnyRole("DRIVER", "MECHANIC", "GARAGE_ADMIN", "ADMIN", "SUPPORT_AGENT", "SUPPORT_MANAGER")
+
+                        // DOCUMENTS
+                        .requestMatchers("/api/documents/**")
+                        .hasAnyRole("MECHANIC", "GARAGE_ADMIN", "ADMIN", "SUPPLIER_VALIDATION_AGENT", "SUPPLIER_VALIDATION_MANAGER")
+
+                        // NOTIFICATIONS
+                        .requestMatchers("/api/notifications/**")
+                        .authenticated()
+
+                        .requestMatchers("/api/device-tokens/**")
+                        .authenticated()
+
+                        // ADMIN
+                        .requestMatchers("/api/admin/**")
+                        .hasAnyRole(
+                                "ADMIN",
+                                "SYSTEM_ADMIN",
+                                "OPERATIONS_AGENT",
+                                "OPERATIONS_MANAGER",
+                                "SUPPORT_AGENT",
+                                "SUPPORT_MANAGER",
+                                "FINANCE_AGENT",
+                                "FINANCE_MANAGER",
+                                "SUPPLIER_VALIDATION_AGENT",
+                                "SUPPLIER_VALIDATION_MANAGER"
+                        )
+
                         .anyRequest().authenticated()
                 )
-                //.oauth2Login(oauth -> oauth
-                    //   .defaultSuccessUrl("/api/auth/oauth2/success", true)
-             //   )
-               // .oauth2ResourceServer(oauth2 -> oauth2.jwt())
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .build();
     }
     @Bean

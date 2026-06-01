@@ -4,5 +4,6 @@ public enum BreakdownStatus {
     PENDING,
     ACCEPTED,
     CANCELLED,
-    EXPIRED
+    EXPIRED,
+    CREATED
 }

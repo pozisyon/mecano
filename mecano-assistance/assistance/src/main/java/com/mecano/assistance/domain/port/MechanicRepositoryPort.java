@@ -12,4 +12,7 @@ public interface MechanicRepositoryPort {
     List<Mechanic> findAvailableMechanicsNear(Location location);
 
     Optional<Mechanic> findById(UUID id);
+    Mechanic save(Mechanic mechanic);
+
+    List<Mechanic> findPendingApproval();
 }

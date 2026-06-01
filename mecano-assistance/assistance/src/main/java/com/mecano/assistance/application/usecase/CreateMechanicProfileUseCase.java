@@ -28,7 +28,7 @@ public class CreateMechanicProfileUseCase {
                 command.speciality(),
                 command.location()
         );
-
+        System.out.println("COMMAND USER ID = " + command.userId());
         MechanicProfile saved = mechanicProfileRepository.save(profile);
 
         MechanicProfileResultMapper mechanicProfileResultMapper= null;

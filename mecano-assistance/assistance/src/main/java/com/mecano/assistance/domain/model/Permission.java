@@ -1,0 +1,30 @@
+package com.mecano.assistance.domain.model;
+
+public enum Permission {
+
+    USER_READ,
+    USER_MANAGE,
+
+    MECHANIC_READ,
+    MECHANIC_VALIDATE,
+    MECHANIC_REJECT,
+
+    GARAGE_READ,
+    GARAGE_VALIDATE,
+    GARAGE_REJECT,
+
+    INTERVENTION_READ,
+    INTERVENTION_MANAGE,
+
+    DISPATCH_MONITOR,
+
+    PAYMENT_READ,
+    PAYMENT_REFUND,
+    FINANCIAL_REPORT_READ,
+
+    DISPUTE_READ,
+    DISPUTE_MANAGE,
+
+    AUDIT_READ,
+    SYSTEM_CONFIG
+}

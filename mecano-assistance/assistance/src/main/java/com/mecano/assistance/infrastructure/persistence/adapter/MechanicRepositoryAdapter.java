@@ -22,7 +22,7 @@ public class MechanicRepositoryAdapter implements MechanicRepositoryPort {
 
     @Override
     public List<Mechanic> findAvailableMechanicsNear(Location location) {
-        return repository.findByApprovedFalse()//findByAvailableTrue() a verifier
+        return repository.findByAvailableTrueAndApprovedTrue()
                 .stream()
                 .map(MechanicMapper::toDomain)
                 .toList();
@@ -32,5 +32,19 @@ public class MechanicRepositoryAdapter implements MechanicRepositoryPort {
     public Optional<Mechanic> findById(UUID id) {
         return repository.findById(id)
                 .map(MechanicMapper::toDomain);
+    }
+
+    @Override
+    public Mechanic save(Mechanic mechanic) {
+        var saved = repository.save(MechanicMapper.toEntity(mechanic));
+        return MechanicMapper.toDomain(saved);
+    }
+
+    @Override
+    public List<Mechanic> findPendingApproval() {
+        return repository.findByApprovedFalse()
+                .stream()
+                .map(MechanicMapper::toDomain)
+                .toList();
     }
 }

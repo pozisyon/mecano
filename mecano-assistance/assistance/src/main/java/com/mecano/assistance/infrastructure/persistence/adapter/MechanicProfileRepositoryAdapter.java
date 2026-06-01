@@ -26,6 +26,11 @@ public class MechanicProfileRepositoryAdapter
     public MechanicProfile save(MechanicProfile profile) {
         var entity = MechanicProfileMapper.toEntity(profile);
         var saved = repository.save(entity);
+        System.out.println("DOMAIN USER ID = " + profile.getUserId());
+
+        //var entity = MechanicProfileMapper.toEntity(profile);
+
+        System.out.println("ENTITY USER ID = " + entity.getUserId());
         return MechanicProfileMapper.toDomain(saved);
     }
 

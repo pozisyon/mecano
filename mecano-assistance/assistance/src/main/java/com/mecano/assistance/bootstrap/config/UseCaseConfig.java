@@ -10,6 +10,9 @@ import com.mecano.assistance.domain.strategy.NearestMechanicStrategy;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import com.mecano.assistance.application.usecase.GetInvoiceUseCase;
+import com.mecano.assistance.application.usecase.GetInvoicesByInterventionUseCase;
+import com.mecano.assistance.domain.port.InvoiceRepositoryPort;
 
 @Configuration
 public class UseCaseConfig {
@@ -84,13 +87,15 @@ public class UseCaseConfig {
             InterventionRepositoryPort interventionRepositoryPort,
             PaymentRepositoryPort paymentRepositoryPort,
             PaymentPort paymentPort,
-            NotificationPort notificationPort
+            NotificationPort notificationPort,
+            GenerateInvoiceUseCase generateInvoiceUseCase
     ) {
         return new PayInterventionUseCase(
                 interventionRepositoryPort,
                 paymentRepositoryPort,
                 paymentPort,
-                notificationPort
+                notificationPort,
+                generateInvoiceUseCase
         );
     }
 
@@ -210,6 +215,48 @@ public class UseCaseConfig {
                 dispatchDomainService,
                 notificationPort
         );
+    }
+
+    @Bean
+    public GenerateInvoiceUseCase generateInvoiceUseCase(
+            InvoiceRepositoryPort invoiceRepositoryPort
+    ) {
+        return new GenerateInvoiceUseCase(invoiceRepositoryPort);
+    }
+
+    @Bean
+    public GetInvoiceUseCase getInvoiceUseCase(
+            InvoiceRepositoryPort invoiceRepositoryPort
+    ) {
+        return new GetInvoiceUseCase(invoiceRepositoryPort);
+    }
+
+    @Bean
+    public GetInvoicesByInterventionUseCase getInvoicesByInterventionUseCase(
+            InvoiceRepositoryPort invoiceRepositoryPort
+    ) {
+        return new GetInvoicesByInterventionUseCase(invoiceRepositoryPort);
+    }
+
+    @Bean
+    public RejectMechanicUseCase rejectMechanicUseCase(
+            MechanicRepositoryPort mechanicRepositoryPort
+    ) {
+        return new RejectMechanicUseCase(mechanicRepositoryPort);
+    }
+
+    @Bean
+    public ApproveMechanicUseCase approveMechanicUseCase(
+            MechanicRepositoryPort mechanicRepositoryPort
+    ) {
+        return new ApproveMechanicUseCase(mechanicRepositoryPort);
+    }
+
+    @Bean
+    public GetPendingMechanicsUseCase getPendingMechanicsUseCase(
+            MechanicRepositoryPort mechanicRepositoryPort
+    ) {
+        return new GetPendingMechanicsUseCase(mechanicRepositoryPort);
     }
 
 }

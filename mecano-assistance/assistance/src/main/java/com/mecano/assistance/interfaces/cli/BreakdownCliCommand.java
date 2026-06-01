@@ -40,9 +40,9 @@ public class BreakdownCliCommand {
                         vehicleId,
                         type,
                         description,
-                        new Location(latitude, parsedLongitude),
-                        status,
-                        createdAt
+                        new Location(latitude, parsedLongitude)
+                      //  status,
+                        //createdAt
                 )
         );
 

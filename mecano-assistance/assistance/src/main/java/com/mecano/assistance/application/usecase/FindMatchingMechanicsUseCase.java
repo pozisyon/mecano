@@ -59,6 +59,24 @@ public class FindMatchingMechanicsUseCase {
                 notificationPort.notifyMechanic(mechanic, request)
         );
 
+
+        System.out.println("MATCHED MECHANICS = " + matchedMechanics.size());
+
+
+
+        System.out.println("OFFERS CREATED = " + offers.size());
+
+        offers.forEach(offer -> {
+            System.out.println("OFFER ID = " + offer.getId());
+            System.out.println("OFFER MECHANIC = " + offer.getMechanicId());
+            System.out.println("OFFER STATUS = " + offer.getStatus());
+            System.out.println("OFFER EXPIRES = " + offer.getExpiresAt());
+        });
+
+        dispatchOfferRepository.saveAll(offers);
+
+        System.out.println("OFFERS SAVED");
+
         return matchedMechanics;
     }
 }

@@ -10,11 +10,11 @@ public class MechanicProfileMapper {
         MechanicEntity entity = new MechanicEntity();
 
         entity.setId(profile.getId());
-       // entity.setUserId(profile.getUserId());
+        entity.setUserId(profile.getUserId());
         entity.setFullName(profile.getFullName());
         entity.setSpeciality(profile.getSpeciality());
         entity.setAvailable(profile.isAvailable());
-       // entity.setApproved(profile.isApproved());
+       entity.setApproved(profile.isApproved());
         entity.setRating(profile.getRating());
         entity.setLatitude(profile.getCurrentLocation().latitude());
         entity.setLongitude(profile.getCurrentLocation().longitude());

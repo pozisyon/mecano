@@ -8,7 +8,7 @@ import java.util.List;
 
 public class DispatchDomainService {
 
-    private static final int OFFER_TTL_SECONDS = 60;
+    private static final int OFFER_TTL_SECONDS = 900;
 
     public List<DispatchOffer> createOffers(
             BreakdownRequest request,

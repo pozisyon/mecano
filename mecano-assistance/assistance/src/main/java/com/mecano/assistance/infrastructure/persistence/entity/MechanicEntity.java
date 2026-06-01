@@ -17,16 +17,25 @@ public class MechanicEntity {
 
     @Id
     private UUID id;
-    private UUID userId;
+   // private UUID userId;
+   @Column(name = "user_id", nullable = false, unique = true)
+   private UUID userId;
     private String fullName;
     private String speciality;
     private boolean available;
+
+    //@Enumerated(EnumType.STRING)
+    //@Column(nullable = false)
+   // private MechanicAccountStatus status;
+
     private double rating;
     private double latitude;
     private double longitude;
    // private boolean approve =false;
    @Column(name = "approved", nullable = false)
    private boolean approved = false;
+
+
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
@@ -53,6 +62,13 @@ public class MechanicEntity {
     }
     public void setApproved(boolean approved) {
         this.approved = approved;
+    }
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     }

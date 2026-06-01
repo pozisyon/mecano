@@ -43,10 +43,7 @@ public class BreakdownRequest {
             UUID vehicleId,
             BreakdownType type,
             String description,
-            Location location,
-            BreakdownStatus status,
-            LocalDateTime createdAt,
-            int dispatchAttempts
+            Location location
     ) {
         if (driverId == null) throw new IllegalArgumentException("Driver is required");
         if (vehicleId == null) throw new IllegalArgumentException("Vehicle is required");
@@ -60,8 +57,8 @@ public class BreakdownRequest {
                 type,
                 description,
                 location,
-                status,
-                createdAt,
+                BreakdownStatus.PENDING,
+                LocalDateTime.now(),
                 0
         );
     }

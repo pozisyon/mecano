@@ -12,6 +12,7 @@ public class MechanicMapper {
                 entity.getFullName(),
                 entity.getSpeciality(),
                 entity.isAvailable(),
+                entity.isApproved(),
                 entity.getRating(),
                 new Location(entity.getLatitude(), entity.getLongitude())
         );
@@ -24,6 +25,7 @@ public class MechanicMapper {
         entity.setFullName(mechanic.getFullName());
         entity.setSpeciality(mechanic.getSpeciality());
         entity.setAvailable(mechanic.isAvailable());
+        entity.setApproved(mechanic.isApproved());
         entity.setRating(mechanic.getRating());
         entity.setLatitude(mechanic.getCurrentLocation().latitude());
         entity.setLongitude(mechanic.getCurrentLocation().longitude());

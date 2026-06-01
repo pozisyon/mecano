@@ -15,7 +15,7 @@ public interface SpringDataDispatchOfferRepository
     Optional<DispatchOfferJpaEntity> findByBreakdownRequestIdAndMechanicIdAndStatus(
             UUID breakdownRequestId,
             UUID mechanicId,
-            String status
+            DispatchOfferStatus status
     );
 
     List<DispatchOfferJpaEntity> findByBreakdownRequestId(UUID breakdownRequestId);

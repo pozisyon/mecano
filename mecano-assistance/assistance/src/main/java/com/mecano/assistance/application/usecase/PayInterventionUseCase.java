@@ -17,17 +17,19 @@ public class PayInterventionUseCase {
     private final PaymentRepositoryPort paymentRepository;
     private final PaymentPort paymentPort;
     private final NotificationPort notificationPort;
-
+    private final GenerateInvoiceUseCase generateInvoiceUseCase;
     public PayInterventionUseCase(
             InterventionRepositoryPort interventionRepository,
             PaymentRepositoryPort paymentRepository,
             PaymentPort paymentPort,
-            NotificationPort notificationPort
+            NotificationPort notificationPort,
+            GenerateInvoiceUseCase generateInvoiceUseCase
     ) {
         this.interventionRepository = interventionRepository;
         this.paymentRepository = paymentRepository;
         this.paymentPort = paymentPort;
         this.notificationPort = notificationPort;
+        this.generateInvoiceUseCase = generateInvoiceUseCase;
     }
 
     public PayInterventionResult execute(PayInterventionCommand command) {
@@ -35,7 +37,7 @@ public class PayInterventionUseCase {
                 .orElseThrow(() -> new NotFoundException("Intervention not found"));//new IllegalArgumentException("Intervention not found"));
 
         if (paymentRepository.findByInterventionId(command.interventionId()).isPresent()) {
-            throw new BusinessException("Breakdown request already assigned");//throw new IllegalStateException("Intervention already has a payment");
+            throw new BusinessException("Intervention already has a payment");
         }
 
         var payment = Payment.create(
@@ -55,7 +57,12 @@ public class PayInterventionUseCase {
         }
 
         var saved = paymentRepository.save(payment);
-
+        generateInvoiceUseCase.execute(
+                saved.getInterventionId(),
+                saved.getId(),
+                saved.getAmount().amount(),
+                saved.getAmount().currency()
+        );
         if (saved.getStatus() == PaymentStatus.PAID) {
             notificationPort.notifyDriverPaymentConfirmed(saved);
         }

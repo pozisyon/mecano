@@ -34,11 +34,7 @@ public class CreateBreakdownRequestUseCase {
                 command.vehicleId(),
                 command.type(),
                 command.description(),
-                command.location(),
-                command.status(),
-                command.createdAt(),
-                0
-
+                command.location()
         );
 
         BreakdownRequest saved = breakdownRepository.save(request);

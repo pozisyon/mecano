@@ -33,14 +33,13 @@ public class DispatchOfferRepositoryAdapter implements DispatchOfferRepositoryPo
                 offers.stream().map(this::toEntity).toList()
         ).stream().map(this::toDomain).toList();
     }
-
     @Override
     public Optional<DispatchOffer> findActiveOffer(UUID breakdownRequestId, UUID mechanicId) {
         return repository
                 .findByBreakdownRequestIdAndMechanicIdAndStatus(
                         breakdownRequestId,
                         mechanicId,
-                        "PENDING"
+                        DispatchOfferStatus.SENT
                 )
                 .map(this::toDomain);
     }
