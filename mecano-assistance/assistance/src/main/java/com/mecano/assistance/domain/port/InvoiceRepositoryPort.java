@@ -15,4 +15,6 @@ public interface InvoiceRepositoryPort {
     Optional<Invoice> findByPaymentId(UUID paymentId);
 
     List<Invoice> findByInterventionId(UUID interventionId);
+
+    List<Invoice> findByInterventionIds(List<UUID> interventionIds);
 }

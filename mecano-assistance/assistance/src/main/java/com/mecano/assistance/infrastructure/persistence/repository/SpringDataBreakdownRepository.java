@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface SpringDataBreakdownRepository
         extends JpaRepository<BreakdownRequestEntity, UUID> {
     List<BreakdownRequestEntity> findByStatus(BreakdownStatus status);
+    List<BreakdownRequestEntity> findByDriverId(UUID driverId);
 }

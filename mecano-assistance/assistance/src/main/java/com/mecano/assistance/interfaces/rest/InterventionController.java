@@ -4,6 +4,7 @@ import com.mecano.assistance.application.command.AcceptInterventionCommand;
 import com.mecano.assistance.application.command.RejectDispatchOfferCommand;
 import com.mecano.assistance.application.command.UpdateInterventionStatusCommand;
 import com.mecano.assistance.application.usecase.AcceptInterventionUseCase;
+import com.mecano.assistance.application.usecase.GetMyInterventionsUseCase;
 import com.mecano.assistance.application.usecase.RejectDispatchOfferUseCase;
 import com.mecano.assistance.application.usecase.UpdateInterventionStatusUseCase;
 import com.mecano.assistance.infrastructure.persistence.repository.SpringDataMechanicRepository;
@@ -26,6 +27,7 @@ public class InterventionController {
 
     private final AcceptInterventionUseCase acceptInterventionUseCase;
     private final UpdateInterventionStatusUseCase updateInterventionStatusUseCase;
+    private final GetMyInterventionsUseCase getMyInterventionsUseCase;
     private final RejectDispatchOfferUseCase rejectDispatchOfferUseCase;
     private final SpringDataUserRepository userRepository;
     private final SpringDataMechanicRepository mechanicRepository;
@@ -33,12 +35,14 @@ public class InterventionController {
             AcceptInterventionUseCase acceptInterventionUseCase,
             UpdateInterventionStatusUseCase updateInterventionStatusUseCase,
             RejectDispatchOfferUseCase rejectDispatchOfferUseCase,
+            GetMyInterventionsUseCase getMyInterventionsUseCase,
             SpringDataUserRepository userRepository,
             SpringDataMechanicRepository mechanicRepository
     ) {
         this.acceptInterventionUseCase = acceptInterventionUseCase;
         this.updateInterventionStatusUseCase = updateInterventionStatusUseCase;
         this.rejectDispatchOfferUseCase = rejectDispatchOfferUseCase;
+        this.getMyInterventionsUseCase = getMyInterventionsUseCase;
         this.userRepository = userRepository;
         this.mechanicRepository = mechanicRepository;
 
@@ -89,6 +93,17 @@ public class InterventionController {
         return ApiResponse.success(
                 "Dispatch offer rejected successfully",
                 null
+        );
+    }
+
+    @GetMapping("/my")
+    public ApiResponse<?> myInterventions(Authentication authentication) {
+        var user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        return ApiResponse.success(
+                "Interventions retrieved successfully",
+                getMyInterventionsUseCase.execute(user.getId())
         );
     }
 }

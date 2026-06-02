@@ -3,6 +3,7 @@ package com.mecano.assistance.interfaces.rest;
 import com.mecano.assistance.application.command.CreateBreakdownRequestCommand;
 import com.mecano.assistance.application.usecase.CreateBreakdownRequestUseCase;
 import com.mecano.assistance.application.usecase.FindMatchingMechanicsUseCase;
+import com.mecano.assistance.application.usecase.GetMyBreakdownsUseCase;
 import com.mecano.assistance.domain.valueobject.Location;
 import com.mecano.assistance.infrastructure.persistence.repository.SpringDataUserRepository;
 import com.mecano.assistance.interfaces.rest.dto.CreateBreakdownRequestDto;
@@ -18,14 +19,17 @@ import java.util.UUID;
 @RequestMapping("/api/breakdowns")
 public class BreakdownController {
 
+    private final GetMyBreakdownsUseCase getMyBreakdownsUseCase;
+    //private final SpringDataUserRepository userRepository;
     private final CreateBreakdownRequestUseCase createBreakdownRequestUseCase;
     private final FindMatchingMechanicsUseCase findMatchingMechanicsUseCase;
     private final SpringDataUserRepository userRepository;
     public BreakdownController(CreateBreakdownRequestUseCase createBreakdownRequestUseCase,
-                               FindMatchingMechanicsUseCase findMatchingMechanicsUseCase,SpringDataUserRepository userRepository) {
+                               FindMatchingMechanicsUseCase findMatchingMechanicsUseCase,SpringDataUserRepository userRepository,GetMyBreakdownsUseCase getMyBreakdownsUseCase) {
         this.createBreakdownRequestUseCase = createBreakdownRequestUseCase;
         this.findMatchingMechanicsUseCase = findMatchingMechanicsUseCase;
         this.userRepository = userRepository;
+        this.getMyBreakdownsUseCase = getMyBreakdownsUseCase;
     }
 
     @PostMapping
@@ -57,6 +61,17 @@ public class BreakdownController {
         return ApiResponse.success(
                 "Breakdown request findMatches successfully",
                 findMatchingMechanicsUseCase.execute(id)
+        );
+    }
+
+    @GetMapping("/my")
+    public ApiResponse<?> myBreakdowns(Authentication authentication) {
+        var user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        return ApiResponse.success(
+                "Breakdowns retrieved successfully",
+                getMyBreakdownsUseCase.execute(user.getId())
         );
     }
 }

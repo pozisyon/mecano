@@ -39,6 +39,7 @@ public class MechanicProfileController {
     private final UserLookupPort userLookupPort;
     private final GetMyDispatchOffersUseCase getMyDispatchOffersUseCase;
     private final SpringDataMechanicRepository mechanicRepository;
+    private final GetMechanicInterventionHistoryUseCase getMechanicInterventionHistoryUseCase;
 
     public MechanicProfileController(
             CreateMechanicProfileUseCase createMechanicProfileUseCase,
@@ -51,7 +52,8 @@ public class MechanicProfileController {
             @Qualifier("webSocketRealtimeNotificationAdapter")RealtimeNotificationPort realtimeNotificationPort,
             UserLookupPort userLookupPort,
             GetMyDispatchOffersUseCase getMyDispatchOffersUseCase,
-            SpringDataMechanicRepository mechanicRepository
+            SpringDataMechanicRepository mechanicRepository,
+            GetMechanicInterventionHistoryUseCase getMechanicInterventionHistoryUseCase
     ) {
         this.createMechanicProfileUseCase = createMechanicProfileUseCase;
         this.getMyMechanicProfileUseCase = getMyMechanicProfileUseCase;
@@ -64,6 +66,7 @@ public class MechanicProfileController {
         this.userLookupPort = userLookupPort;
         this.getMyDispatchOffersUseCase = getMyDispatchOffersUseCase;
         this.mechanicRepository = mechanicRepository;
+        this.getMechanicInterventionHistoryUseCase = getMechanicInterventionHistoryUseCase;
     }
 
     @PostMapping("/profile")
@@ -175,5 +178,25 @@ public class MechanicProfileController {
     ) {
         return userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new NotFoundException("User not found"));
+    }
+
+    @GetMapping("/interventions/history")
+    public ApiResponse<?> interventionHistory(
+            Authentication authentication
+    ) {
+        var user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() ->
+                        new NotFoundException("User not found"));
+
+        var mechanic = mechanicRepository.findByUserId(user.getId())
+                .orElseThrow(() ->
+                        new NotFoundException("Mechanic profile not found"));
+
+        return ApiResponse.success(
+                "Mechanic intervention history retrieved successfully",
+                getMechanicInterventionHistoryUseCase.execute(
+                        mechanic.getId()
+                )
+        );
     }
 }

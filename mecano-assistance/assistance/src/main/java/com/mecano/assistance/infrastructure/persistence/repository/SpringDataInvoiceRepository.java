@@ -12,4 +12,5 @@ public interface SpringDataInvoiceRepository extends JpaRepository<InvoiceEntity
     Optional<InvoiceEntity> findByPaymentId(UUID paymentId);
 
     List<InvoiceEntity> findByInterventionId(UUID interventionId);
+    List<InvoiceEntity> findByInterventionIdIn(List<UUID> interventionIds);
 }

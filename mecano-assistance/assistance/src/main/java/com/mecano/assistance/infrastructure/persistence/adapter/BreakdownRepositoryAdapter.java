@@ -41,4 +41,12 @@ public class BreakdownRepositoryAdapter implements BreakdownRepositoryPort {
                 .map(BreakdownRequestMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<BreakdownRequest> findByDriverId(UUID driverId) {
+        return repository.findByDriverId(driverId)
+                .stream()
+                .map(BreakdownRequestMapper::toDomain)
+                .toList();
+    }
 }

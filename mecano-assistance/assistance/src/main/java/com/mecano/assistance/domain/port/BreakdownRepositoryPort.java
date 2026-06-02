@@ -13,4 +13,5 @@ public interface BreakdownRepositoryPort {
 
     Optional<BreakdownRequest> findById(UUID id);
     List<BreakdownRequest> findByStatus(BreakdownStatus status);
+    List<BreakdownRequest> findByDriverId(UUID driverId);
 }

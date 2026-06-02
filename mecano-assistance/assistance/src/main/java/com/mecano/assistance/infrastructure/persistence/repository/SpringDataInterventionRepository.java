@@ -16,4 +16,11 @@ public interface SpringDataInterventionRepository
             UUID mechanicId,
             List<InterventionStatus> statuses
     );
+
+    List<InterventionEntity> findByBreakdownRequestIdIn(
+            List<UUID> breakdownRequestIds
+    );
+
+    List<InterventionEntity> findByMechanicId(UUID mechanicId);
+
 }

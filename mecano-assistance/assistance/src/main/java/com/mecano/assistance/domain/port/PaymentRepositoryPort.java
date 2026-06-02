@@ -2,6 +2,7 @@ package com.mecano.assistance.domain.port;
 
 import com.mecano.assistance.domain.model.Payment;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,4 +13,5 @@ public interface PaymentRepositoryPort {
     Optional<Payment> findById(UUID id);
 
     Optional<Payment> findByInterventionId(UUID interventionId);
+    List<Payment> findByInterventionIds(List<UUID> interventionIds);
 }

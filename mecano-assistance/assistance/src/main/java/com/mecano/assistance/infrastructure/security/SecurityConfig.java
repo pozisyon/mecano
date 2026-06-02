@@ -47,6 +47,15 @@ public class SecurityConfig {
                                 "/actuator/health",
                                 "/swagger-ui.html"
                         ).permitAll()
+                        .requestMatchers("/api/interventions/my")
+                        .hasAnyRole("DRIVER", "ADMIN")
+                        .requestMatchers("/api/payments/my")
+                        .hasAnyRole("DRIVER", "ADMIN")
+                        .requestMatchers("/api/invoices/my")
+                        .hasAnyRole("DRIVER", "ADMIN")
+                        .requestMatchers("/api/mechanics/interventions/history")
+                        .hasAnyRole("MECHANIC", "ADMIN")
+
                                 // ADMIN - MECHANIC VALIDATION
                                 .requestMatchers("/api/admin/mechanics/pending")
                                 .hasAuthority("PERMISSION_MECHANIC_READ")

@@ -6,6 +6,7 @@ import com.mecano.assistance.infrastructure.persistence.mapper.InterventionMappe
 import com.mecano.assistance.infrastructure.persistence.repository.SpringDataInterventionRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,5 +34,21 @@ public class InterventionRepositoryAdapter implements InterventionRepositoryPort
     @Override
     public boolean existsByBreakdownRequestId(UUID breakdownRequestId) {
         return repository.existsByBreakdownRequestId(breakdownRequestId);
+    }
+
+    @Override
+    public List<Intervention> findByBreakdownRequestIds(List<UUID> breakdownRequestIds) {
+        return repository.findByBreakdownRequestIdIn(breakdownRequestIds)
+                .stream()
+                .map(InterventionMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Intervention> findByMechanicId(UUID mechanicId) {
+        return repository.findByMechanicId(mechanicId)
+                .stream()
+                .map(InterventionMapper::toDomain)
+                .toList();
     }
 }

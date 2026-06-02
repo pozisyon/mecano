@@ -43,4 +43,12 @@ public class InvoiceRepositoryAdapter implements InvoiceRepositoryPort {
                 .map(InvoiceMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<Invoice> findByInterventionIds(List<UUID> interventionIds) {
+        return repository.findByInterventionIdIn(interventionIds)
+                .stream()
+                .map(InvoiceMapper::toDomain)
+                .toList();
+    }
 }

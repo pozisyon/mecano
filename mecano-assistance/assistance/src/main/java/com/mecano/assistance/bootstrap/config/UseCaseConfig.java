@@ -13,6 +13,9 @@ import org.springframework.context.annotation.Configuration;
 import com.mecano.assistance.application.usecase.GetInvoiceUseCase;
 import com.mecano.assistance.application.usecase.GetInvoicesByInterventionUseCase;
 import com.mecano.assistance.domain.port.InvoiceRepositoryPort;
+import com.mecano.assistance.application.usecase.GetMyInterventionsUseCase;
+import com.mecano.assistance.domain.port.BreakdownRepositoryPort;
+import com.mecano.assistance.domain.port.InterventionRepositoryPort;
 
 @Configuration
 public class UseCaseConfig {
@@ -257,6 +260,54 @@ public class UseCaseConfig {
             MechanicRepositoryPort mechanicRepositoryPort
     ) {
         return new GetPendingMechanicsUseCase(mechanicRepositoryPort);
+    }
+
+    @Bean
+    public GetMyBreakdownsUseCase getMyBreakdownsUseCase(
+            BreakdownRepositoryPort breakdownRepositoryPort
+    ) {
+        return new GetMyBreakdownsUseCase(breakdownRepositoryPort);
+    }
+    @Bean
+    public GetMyInterventionsUseCase getMyInterventionsUseCase(
+            BreakdownRepositoryPort breakdownRepositoryPort,
+            InterventionRepositoryPort interventionRepositoryPort
+    ) {
+        return new GetMyInterventionsUseCase(
+                breakdownRepositoryPort,
+                interventionRepositoryPort
+        );
+    }
+
+    @Bean
+    public GetMyPaymentsUseCase getMyPaymentsUseCase(
+            GetMyInterventionsUseCase getMyInterventionsUseCase,
+            PaymentRepositoryPort paymentRepositoryPort
+    ) {
+        return new GetMyPaymentsUseCase(
+                getMyInterventionsUseCase,
+                paymentRepositoryPort
+        );
+    }
+
+    @Bean
+    public GetMyInvoicesUseCase getMyInvoicesUseCase(
+            GetMyInterventionsUseCase getMyInterventionsUseCase,
+            InvoiceRepositoryPort invoiceRepositoryPort
+    ) {
+        return new GetMyInvoicesUseCase(
+                getMyInterventionsUseCase,
+                invoiceRepositoryPort
+        );
+    }
+    @Bean
+    public GetMechanicInterventionHistoryUseCase
+    getMechanicInterventionHistoryUseCase(
+            InterventionRepositoryPort interventionRepositoryPort
+    ) {
+        return new GetMechanicInterventionHistoryUseCase(
+                interventionRepositoryPort
+        );
     }
 
 }

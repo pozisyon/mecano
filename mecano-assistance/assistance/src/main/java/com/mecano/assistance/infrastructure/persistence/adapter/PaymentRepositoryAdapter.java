@@ -6,6 +6,7 @@ import com.mecano.assistance.infrastructure.persistence.mapper.PaymentMapper;
 import com.mecano.assistance.infrastructure.persistence.repository.SpringDataPaymentRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,5 +35,13 @@ public class PaymentRepositoryAdapter implements PaymentRepositoryPort {
     public Optional<Payment> findByInterventionId(UUID interventionId) {
         return repository.findByInterventionId(interventionId)
                 .map(PaymentMapper::toDomain);
+    }
+
+    @Override
+    public List<Payment> findByInterventionIds(List<UUID> interventionIds) {
+        return repository.findByInterventionIdIn(interventionIds)
+                .stream()
+                .map(PaymentMapper::toDomain)
+                .toList();
     }
 }
