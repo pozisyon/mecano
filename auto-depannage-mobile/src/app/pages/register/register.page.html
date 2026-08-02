@@ -1,0 +1,79 @@
+<ion-content class="register-page" fullscreen>
+  <div class="register-wrapper">
+
+    <div class="brand">
+      <div class="logo">
+        <ion-icon name="construct-outline"></ion-icon>
+      </div>
+
+      <h1>Create Account</h1>
+      <p>Join Mecano roadside assistance</p>
+    </div>
+
+    <ion-card>
+      <ion-card-content>
+
+        <ion-item>
+          <ion-label position="stacked">Full Name</ion-label>
+          <ion-input
+            type="text"
+            [(ngModel)]="fullName"
+            name="fullName"
+            placeholder="John Smith">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="john@mecano.com">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Password</ion-label>
+          <ion-input
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="••••••••">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Account Type</ion-label>
+          <ion-select [(ngModel)]="role" name="role">
+            <ion-select-option value="DRIVER">Driver</ion-select-option>
+            <ion-select-option value="MECHANIC">Mechanic</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-text color="danger" *ngIf="errorMessage">
+          <p>{{ errorMessage }}</p>
+        </ion-text>
+
+        <ion-button
+          expand="block"
+          class="register-btn"
+          [disabled]="loading"
+          (click)="register()">
+
+          <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+          <span *ngIf="!loading">Create Account</span>
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          fill="clear"
+          routerLink="/auth/login">
+          Already have an account?
+        </ion-button>
+
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+</ion-content>

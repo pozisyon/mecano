@@ -1,5 +1,5 @@
 package com.mecano.assistance.interfaces.rest;
-
+import com.mecano.assistance.application.usecase.*;
 import com.mecano.assistance.application.usecase.GetInvoiceUseCase;
 import com.mecano.assistance.application.usecase.GetInvoicesByInterventionUseCase;
 import com.mecano.assistance.infrastructure.persistence.repository.SpringDataUserRepository;
@@ -16,16 +16,18 @@ public class InvoiceController {
 
     private final GetInvoiceUseCase getInvoiceUseCase;
     private final GetInvoicesByInterventionUseCase getInvoicesByInterventionUseCase;
-    private final GetInvoiceUseCase getMyInvoicesUseCase;
+    private final GetMyInvoicesUseCase getMyInvoicesUseCase;
     private final SpringDataUserRepository userRepository;
     public InvoiceController(
             GetInvoiceUseCase getInvoiceUseCase,
-            GetInvoicesByInterventionUseCase getInvoicesByInterventionUseCase,SpringDataUserRepository userRepository,GetInvoiceUseCase getMyInvoicesUseCase
+            GetInvoicesByInterventionUseCase getInvoicesByInterventionUseCase,
+            GetMyInvoicesUseCase getMyInvoicesUseCase,
+            SpringDataUserRepository userRepository
     ) {
         this.getInvoiceUseCase = getInvoiceUseCase;
         this.getInvoicesByInterventionUseCase = getInvoicesByInterventionUseCase;
-        this.userRepository = userRepository;
         this.getMyInvoicesUseCase = getMyInvoicesUseCase;
+        this.userRepository = userRepository;
     }
 
 

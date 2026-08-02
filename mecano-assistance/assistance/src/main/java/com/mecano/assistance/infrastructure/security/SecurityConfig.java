@@ -58,6 +58,7 @@ public class SecurityConfig {
 
                                 // ADMIN - MECHANIC VALIDATION
                                 .requestMatchers("/api/admin/mechanics/pending")
+                                //.hasRole("ADMIN")
                                 .hasAuthority("PERMISSION_MECHANIC_READ")
 
                                 .requestMatchers("/api/admin/mechanics/*/approve")
